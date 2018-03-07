@@ -10,6 +10,7 @@ if (!exists("data.env")) {
   data.env <<- new.env(parent=globalenv())
   load_data(cybc.list)
 }
+calc_cybc_etf(cybc.list)
 var.env <<- new.env(parent=globalenv())
 # for (cybc.str in cybc.list) {
 #   cmd_str <- paste0("var.env$",cybc.str," <- as.xts(as.numeric(gsub(',','',data.env$",cybc.str,".xts[,'Close']),

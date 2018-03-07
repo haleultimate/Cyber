@@ -110,3 +110,22 @@ calc_look_forward <- function(cybc.str,lf=-1) {
   eval(parse(text=cmd_str))
   eval(parse(text=paste0("print(",ve.xts,"[1,])")))
 }
+
+calc_cybc_etf <- function(cybc.list) {
+  print(paste0("in calc_cybc_etf"))
+  print(cybc.list)
+  for (cybc.str in cybc.list) {
+    if (exists("cybc_etf",where=data.env)) {
+      cmd_str <- paste0("data.env$cybc_etf <- merge(data.env$cybc_etf,data.env$",cybc.str,"[,'",cybc.str,".Market.Cap'])")
+      print(cmd_str)
+      eval(parse(text=cmd_str))
+    } else {
+      cmd_str <- paste0("data.env$cybc_etf <- data.env$",cybc.str,"[,'",cybc.str,".Market.Cap']")
+      print(cmd_str)
+      eval(parse(text=cmd_str))
+    }
+  }
+  data.env$cybc_etf[is.na(data.env$cybc_etf)] <- 0
+  data.env$cybc_etf <- data.env$cybc_etf/rowSums(data.env$cybc_etf)
+}
+  

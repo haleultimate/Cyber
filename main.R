@@ -1,17 +1,30 @@
-keep_list <- c("data.env")
-rm(list=ls(all=TRUE)[!ls(all=TRUE) %in% keep_list])
+# run_ps.R
+print(paste("Start time:",Sys.time()))
 
-library(quantmod)
-library(dplyr)
-source("load_data.R")
-cybc.list <- c("BTC","ETH","BCH","LTC","RPL")  
+if (!exists("stx_list.loaded")) stx_list.loaded <- NULL
+keep_list <- c("data.env","load.env","etf.env","stx_list.loaded")
+rm(list = ls(all=TRUE)[!ls(all=TRUE) %in% keep_list]) #clean workspace except for keep_list so we don't have to reload data
 
-if (!exists("data.env")) {
-  data.env <<- new.env(parent=globalenv())
-  etf.env <<- new.env(parent=globalenv())
-  load_data(cybc.list)
-  calc_cybc_etf(cybc.list)
-}
+source("init_lib.R")            #library needed to load other libraries 
+
+stx_list.loaded <- init_session(stx_list.loaded)    #load libraries, set com parms, load/clean data (if not loaded)
+
+run_prediction()                #prediction model (reg_lib.R)
+
+# keep_list <- c("data.env")
+# rm(list=ls(all=TRUE)[!ls(all=TRUE) %in% keep_list])
+# 
+# library(quantmod)
+# library(dplyr)
+# source("load_data.R")
+# cybc.list <- c("BTC","ETH","BCH","LTC","RPL")  
+# 
+# if (!exists("data.env")) {
+#   data.env <<- new.env(parent=globalenv())
+#   etf.env <<- new.env(parent=globalenv())
+#   load_data(cybc.list)
+#   calc_cybc_etf(cybc.list)
+# }
 #var.env <<- new.env(parent=globalenv())
 
 # for (cybc.str in cybc.list) {

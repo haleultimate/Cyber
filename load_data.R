@@ -68,6 +68,7 @@ load_data <- function(cybc.list) {
   }
   #rm(a,cybc.length,cybcstr,date_list,i,wd)
   #print(ls(data.env))
+  return(cybc.list)
 }
 
 

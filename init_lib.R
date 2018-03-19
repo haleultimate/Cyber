@@ -71,6 +71,7 @@ init_session <- function(stx_list.loaded) {
       calc_cybc_etf(com.env$stx.symbols)
     }
     set_opt_cybc_settings()
+    calc_cybc_dates()
   } else {
     stx_list.loaded <- load_stock_history(stx_list.loaded)     #only needed after first run if stock list changes
     load_data_files()
@@ -329,6 +330,16 @@ get_end_date <- function(ticker) {
   #   print(paste("Problem in get_end_date",ticker,stk_end_date,end_date))
   # }
   return(end_date)
+}
+
+calc_cybc_dates <- function() {
+  com.env$stx <- length(com.env$stx.symbols)
+  com.env$stx_list <- c(com.env$etf.symbols,com.env$stx.symbols)
+  #print(com.env$stx_list)
+  com.env$start_date <- lapply(com.env$stx_list,get_start_date)
+  com.env$end_date <- lapply(com.env$stx_list,get_end_date)
+  names(com.env$start_date) <- com.env$stx_list
+  names(com.env$end_date) <- com.env$stx_list
 }
 
 remove_problem_stocks <- function() {

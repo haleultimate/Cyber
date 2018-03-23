@@ -1535,8 +1535,8 @@ calc_one_var <- function(vd) {
       }
     }
   }
-  if (any(grepl("\\.",colnames(var.env$BAC)))) {
-    print(colnames(var.env$BAC))
+  if (any(grepl("\\.",colnames(var.env$BTC)))) {
+    print(colnames(var.env$BTC))
     print("in calc_one_var")
     source("close_session.R")
   }

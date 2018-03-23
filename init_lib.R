@@ -1,8 +1,8 @@
 #init_lib.R
 #parms that should be changed by user manually to control run_ps.R behavior
 set_control_parms <- function() {
-  com.env$model_loops <- 3
-  com.env$add_var_levels <- c(3,5)#,20,30,40)
+  com.env$model_loops <- 20
+  com.env$add_var_levels <- c(10,20,30,40)
   com.env$opt_model <- TRUE
   com.env$load_vars <- FALSE
   com.env$load_model <- FALSE
@@ -10,7 +10,7 @@ set_control_parms <- function() {
   com.env$save_model <- FALSE
   com.env$save_model_name <- "lf5_500_1107.vcom"
   com.env$save_var_n <- 0
-  com.env$look_forward <- 1
+  com.env$look_forward <- 5
   com.env$mod_var_loops <- 20
   com.env$opt_type <- "adjr2_is"  #{adjr2_is,single_oos,rolling_oos}
   com.env$run_sim <- FALSE
@@ -71,7 +71,7 @@ init_session <- function(stx_list.loaded) {
       calc_cybc_etf(com.env$stx.symbols)
     }
     set_opt_cybc_settings()
-    calc_cybc_dates()
+    remove_cybc_tickers()
   } else {
     stx_list.loaded <- load_stock_history(stx_list.loaded)     #only needed after first run if stock list changes
     load_data_files()
@@ -185,7 +185,7 @@ set_opt_cybc_settings <- function() {
   for (i in (length(com.env$reg_date_index)-1):1) com.env$date_wts[i] = com.env$date_wts[i+1]*com.env$date_decay
   switch(com.env$opt_type,
          "adjr2_is" = {
-           com.env$sig <- 0.001
+           com.env$sig <- 0.01
          },
          "single_oos" = {
            com.env$sig <- 0.01
@@ -332,10 +332,49 @@ get_end_date <- function(ticker) {
   return(end_date)
 }
 
-calc_cybc_dates <- function() {
+remove_cybc_tickers <- function() {
+  print(paste("in remove_cybc_tickers",length(com.env$stx.symbols)))
+  #print(com.env$stx_list)
+  #com.env$corr.threshold <- 0.3
+  print(length(com.env$stx.symbols))
+  static.stx.symbols <- com.env$stx.symbols
+  com.env$days2remove <- 60
+  #load.env$etf_corr <- NULL
+  for (i in 1:length(static.stx.symbols)) {
+    ticker <- static.stx.symbols[i]
+    if (make.names(ticker) != ticker) {  #ticker not valid variable name in R
+      print(paste("remove",ticker,"from list, not valid name",make.names(ticker)))
+      com.env$stx.symbols <- com.env$stx.symbols[-which(com.env$stx.symbols == ticker)] #remove from stx list
+      com.env$stx_list <- com.env$stx_list[-which(com.env$stx_list == ticker)]
+      next()
+    }
+    cmd_string <- paste0("missing_data <- any(grepl('NA',summary(data.env$",ticker,"[,'",ticker,".O'])))")
+    eval(parse(text=cmd_string))
+    if (missing_data) {  #remove stocks that have missing days (by checking Open)
+      print(paste("remove",ticker,"from list, missing_data"))
+      #cmd_string <- paste0("print(summary(data.env$",ticker,"[,'",ticker,".O']))")
+      #eval(parse(text=cmd_string))
+      com.env$stx.symbols <- com.env$stx.symbols[-which(com.env$stx.symbols == ticker)] #remove from stx list
+      com.env$stx_list <- com.env$stx_list[-which(com.env$stx_list == ticker)]
+      next()
+    }
+    #etf <- com.env$etf_lookup[ticker]
+    #cmd_string <- paste("corr.data <- cbind(data.env$",etf,"[,'",etf,".Adjusted'],data.env$",ticker,"[,'",ticker,".Adjusted'])",sep="")
+    #eval(parse(text=cmd_string))
+    cmd_string <- paste("enough_history <- nrow(data.env$",ticker,"[com.env$reg_date_range]) > 200",sep="")
+    eval(parse(text=cmd_string))
+    if ( (!enough_history) ) {      #| (corr.val < com.env$corr.threshold) ) {
+      print(paste("remove",ticker,"from list, not enough history"))
+      #print(paste("remove",ticker,"from stx list, not correlated with etf",corr.val))
+      com.env$stx.symbols <- com.env$stx.symbols[-which(com.env$stx.symbols == ticker)] #stx.symbols - only stocks
+      com.env$stx_list <- com.env$stx_list[-which(com.env$stx_list == ticker)]          #stx_list - contains etfs
+    } 
+    #else {
+    #  load.env$etf_corr[[i]] <- cor(corr.data[com.env$reg_date_range],use="complete.obs")[1,2]
+    #}
+  }
   com.env$stx <- length(com.env$stx.symbols)
   com.env$stx_list <- c(com.env$etf.symbols,com.env$stx.symbols)
-  #print(com.env$stx_list)
   com.env$start_date <- lapply(com.env$stx_list,get_start_date)
   com.env$end_date <- lapply(com.env$stx_list,get_end_date)
   names(com.env$start_date) <- com.env$stx_list

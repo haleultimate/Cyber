@@ -52,14 +52,14 @@ opt_model <- function(model_loops,mod_var_loops) {
     if (!try_mods(eval_adj_r2(),current_add_loop,mod_var_loops)) next    
 
     #mod vars
-    #cat("Entering mod_vars with",length(com.env$best_clu_names),"vars, best_adj_r2=",com.env$best_adj_r2,'\n')
+    cat("Entering mod_vars with",length(com.env$best_clu_names),"vars, best_adj_r2=",com.env$best_adj_r2,'\n')
     for (current_mod_loop in 1:mod_var_loops) {       #end of loop controlled by finish_mod_loop below
       #run regression, if model improved optimize, update best vars and end loop; if model got worse revert and continue
       if (finish_mod_loop(mod_var("model"))) break  #try a random model var mod
     }
     print(paste("Mod Loops attempted:",current_mod_loop,"/",mod_var_loops,",",length(com.env$best_clu_names),com.env$best_adj_r2,Sys.time()))
-    if (any(grepl("\\.",colnames(var.env$BAC)))) {
-      print(colnames(var.env$BAC))
+    if (any(grepl("\\.",colnames(var.env$BTC)))) {
+      print(colnames(var.env$BTC))
       print("after mod_loop")
       source("close_session.R")
     }
@@ -69,8 +69,8 @@ opt_model <- function(model_loops,mod_var_loops) {
     clean_var_env()  #remove all vars not in current vcom
     check_vcom(com.env$v.com,"end of mod loop")
     print(paste("Mod Loops attempted:",current_mod_loop,"/",mod_var_loops,",",length(com.env$best_clu_names),com.env$best_adj_r2,Sys.time()))
-    if (any(grepl("\\.",colnames(var.env$BAC)))) {
-      print(colnames(var.env$BAC))
+    if (any(grepl("\\.",colnames(var.env$BTC)))) {
+      print(colnames(var.env$BTC))
       print("after opt_var_selection / check_vcom")
       source("close_session.R")
     }
@@ -95,8 +95,8 @@ check_vcom <- function(vcom,print_str) {
       source("close_session.R")
     }
   }
-  if (any(grepl("\\.",colnames(var.env$BAC)))) {
-    print(colnames(var.env$BAC))
+  if (any(grepl("\\.",colnames(var.env$BTC)))) {
+    print(colnames(var.env$BTC))
     source("close_session.R")
   }
 }
@@ -130,6 +130,7 @@ get_add_vars <- function() {
 #if model improved update com.env$best_reg_vars, com.env$best_adj_r2, com.env$best_vcom (return(TRUE))
 #if model didn't improve delete var.env, revert to best previous com.env$v.com (return(FALSE))
 try_mods <- function(adj_r2,current_loop,mod_var_loops) {
+  #print("in try_mods")
   return_try_mods <- (mod_var_loops > 0)    #don't mod if no mod_var_loops
   if (adj_r2 > com.env$best_adj_r2) {
     com.env$best_clu_names <- com.env$clu_names
@@ -200,6 +201,7 @@ finish_mod_loop <- function(mod_pair) {
 #Other vars modified: com.env$v.com, var.env$reg_data.df, com.env$clu_names, com.env$model.current
 #Other vars accessed: colnames(var.env$BAC) [hardcoded; only for error checking]
 eval_adj_r2 <- function(mod_pair=NULL,oos_data=FALSE,sim_data=FALSE,verbose=FALSE) {
+  #print("in eval_adj_r2")
   if (!is.null(mod_pair)) {  #only calc modified vars and vars dependent on them
     #print(paste("make_vars with modvar_list",Sys.time()))
     V1 <- mod_pair[[1]]
@@ -235,6 +237,7 @@ eval_adj_r2 <- function(mod_pair=NULL,oos_data=FALSE,sim_data=FALSE,verbose=FALS
     calc_all_vars()  #eval_adj_r2 normally by calculating all vars in com.env$v.com
   }
   if (is.null(mod_pair)) {     #eval_adj_r2 normally
+    print("eval_adj_r2 normally")
     collect_data(oos_data=oos_data,sim_data=sim_data)  #populate reg_data.df with model vars
     run_regression(oos_data=oos_data,sim_data=sim_data,verbose=verbose)    #run full stepwise regression after first removing colinear vars
   } else {                     #run_mod_regression        
@@ -322,7 +325,7 @@ get_mod_list_req_mod_pair <- function(mod_pair) {
 get_mod_reg_names <- function(mod_list) {
   reg_names <- com.env$best_clu_names
   new_reg_names <- reg_names
-  cnBAC <- colnames(var.env$BAC)  #for error checking
+  cnBAC <- colnames(var.env$BTC)  #for error checking
   for (vd_pair in mod_list) {
     V1 <- vd_pair[[1]]
     V2 <- vd_pair[[2]]
@@ -340,17 +343,17 @@ get_mod_reg_names <- function(mod_list) {
         for (i in 1:V1$bins) {
           if (paste0(V1$clu,"_",i) %in% reg_names) {
             new_reg_names <- c(new_reg_names,paste0(V2$clu,"_",i))
-            if (!(paste0(V2$clu,"_",i) %in% cnBAC)) error_text <- paste("mod bin:",V2$clu,"_",i,"clu bin name found in new_reg_names, but not in colnames var.env$BAC")
+            if (!(paste0(V2$clu,"_",i) %in% cnBAC)) error_text <- paste("mod bin:",V2$clu,"_",i,"clu bin name found in new_reg_names, but not in colnames var.env$BTC")
           }
         }
       } else {                                                        #no binning, added bin, or deleted bin
         if (V2$bins == 1) {
           new_reg_names <- c(new_reg_names,V2$clu)
-          if (!(V2$clu %in% cnBAC)) error_text <- paste(V2$clu,"clu bin name found in new_reg_names, but not in colnames var.env$BAC")
+          if (!(V2$clu %in% cnBAC)) error_text <- paste(V2$clu,"clu bin name found in new_reg_names, but not in colnames var.env$BTC")
         } else {
           for (i in 1:V2$bins) {
             new_reg_names <- c(new_reg_names,paste0(V2$clu,"_",i))
-            if (!(paste0(V2$clu,"_",i) %in% cnBAC)) error_text <- paste("add bin:",V2$clu,"_",i,"clu bin name found in new_reg_names, but not in colnames var.env$BAC")
+            if (!(paste0(V2$clu,"_",i) %in% cnBAC)) error_text <- paste("add bin:",V2$clu,"_",i,"clu bin name found in new_reg_names, but not in colnames var.env$BTC")
           }
         }
       }
@@ -504,7 +507,7 @@ run_wt_regression <- function(reg_vars) {
 #takes data from each stock in var.env and places into a single data frame [var.env$reg_data.df]
 #if oos_data == TRUE include out-of-sample data in var.env$reg_data.df
 collect_data <- function (oos_data = FALSE, sim_data = FALSE, reg_names = NULL) {
-  print(paste("in_collect data",oos_data,sim_data))
+  #print(paste("in_collect data",oos_data,sim_data))
   #print(reg_names)
   if (is.null(reg_names)) {
     vvars <- NULL
@@ -522,6 +525,7 @@ collect_data <- function (oos_data = FALSE, sim_data = FALSE, reg_names = NULL) 
   } else {
     allmodelvars <- c(com.env$predict.clu,reg_names)
   }
+  #print(allmodelvars)
   
   #get data for all stx into single data frame
   var.env$reg_data.df <- NULL
@@ -577,13 +581,14 @@ collect_data <- function (oos_data = FALSE, sim_data = FALSE, reg_names = NULL) 
     if (oos_data) {
       subset_string <- paste0("var.env$",ticker,"[com.env$oos_date_range,",df_list,"]")
       cmd_string <- paste("var.env$oos_data.df <- bind_rows(var.env$oos_data.df,as.data.frame(",subset_string,"))",sep="")
+      #print(cmd_string)
       eval(parse(text=cmd_string))
     }
     if (sim_data) {
       subset_string <- paste0("var.env$",ticker,"[com.env$sim_date_range,",df_list,"]")
-      #print(paste("Ticker:",ticker))
       cmd_string <- paste0("var.env$sim_data.df <- bind_rows(var.env$sim_data.df,as.data.frame(",subset_string,"))")
-      if (first_pass) print(cmd_string)
+      #if (first_pass) 
+      #print(cmd_string)
       eval(parse(text=cmd_string))
     }
     first_pass <- FALSE
@@ -854,9 +859,9 @@ clean_var_env <- function() {
     #print(cmd_string)
     eval(parse(text=cmd_string))
   }
-  if (!(all(com.env$best_clu_names %in% colnames(var.env$BAC)))) {
+  if (!(all(com.env$best_clu_names %in% colnames(var.env$BTC)))) {
     print("ERROR in clean var env, missing best_clu_name")
     print(com.env$best_clu_names)
-    print(colnames(var.env$BAC))
+    print(colnames(var.env$BTC))
   }
 }

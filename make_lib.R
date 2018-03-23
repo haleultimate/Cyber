@@ -65,7 +65,7 @@ vdlist2vcom <- function(vdlist,vcom_num=0) {  #append to end if no vcom_num give
         print(allmath)
         tmp_clu <- which(com.env$var_list %in% allmath)
         print(tmp_clu)
-        if (any(c(paste0("C",tmp_clu),paste0("C",tmp_clu,"_",1),paste0("C",tmp_clu,"_",2)) %in% colnames(var.env$BAC))) {
+        if (any(c(paste0("C",tmp_clu),paste0("C",tmp_clu,"_",1),paste0("C",tmp_clu,"_",2)) %in% colnames(var.env$BTC))) {
           print("clu found in var.env")
         } else {
           print("clu not found in var.env")

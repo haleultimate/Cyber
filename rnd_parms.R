@@ -109,7 +109,7 @@ rnd.env$p$to <- c(0.5,0.5)
 names(rnd.env$p$to) <- c(TRUE,FALSE)
 
 #caps ('cap_pct','zcap','abscap','none')
-rnd.env$p$cap_dim <- c(0.5,0.5)
+rnd.env$p$cap_dim <- c(0.5,0.)  #don't allow calc_cap_x
 names(rnd.env$p$cap_dim) <- rnd.env$cap_dim_list  #calc_cap or calc_cap_x
 rnd.env$p$cap_type <- c(0.4,0.2,0.,0.3)
 names(rnd.env$p$cap_type) <- rnd.env$cap_type_list
@@ -128,7 +128,7 @@ rnd.env$p$pow <- rep(0.1,times=length(rnd.env$pow_list))
 names(rnd.env$p$pow) <- rnd.env$pow_list
 
 #scale
-rnd.env$p$scale <- c(0.1,0.1,0.1,0.4,0.4,0.4,0) # must scale, cross-sectional scaling preferred
+rnd.env$p$scale <- c(0.1,0.1,0.1,0.,0.,0.,0) # must scale, cross-sectional scaling removed
 names(rnd.env$p$scale) <- rnd.env$scale_list
 
 #calc var mod, used in mod_fve, mod_ia, mod_bin

@@ -210,6 +210,7 @@ calc_decay <- function(ve.xts,coln,decay,var_cnt=1,first_pass=FALSE) { #compute 
       print(paste(ve.xts,coln,decay))
       var_cnt <- 1
     }
+    if(!(is.logical(var_cnt > 1))) var_cnt <-1
     if (var_cnt > 1) {
       for (i in 2:var_cnt) {
         data_string <- paste(ve.xts,"[,",coln+i-1,"]",sep="")

@@ -1,16 +1,16 @@
 #init_lib.R
 #parms that should be changed by user manually to control run_ps.R behavior
 set_control_parms <- function() {
-  com.env$model_loops <- 500
+  com.env$model_loops <- 5
   com.env$add_var_levels <- c(10,20,30,40)
   com.env$opt_model <- TRUE
-  com.env$load_vars <- TRUE
-  com.env$load_model <- TRUE
+  com.env$load_vars <- FALSE
+  com.env$load_model <- FALSE
   com.env$load_model_name <- "lf1_4_0326.vcom"
-  com.env$save_model <- TRUE
+  com.env$save_model <- FALSE
   com.env$save_model_name <- "lf1_4_0326.vcom"
   com.env$save_var_n <- 1
-  com.env$look_forward <- 1
+  com.env$look_forward <- 5
   com.env$mod_var_loops <- 20
   com.env$opt_type <- "adjr2_is"  #{adjr2_is,single_oos,rolling_oos}
   com.env$run_sim <- FALSE
@@ -93,6 +93,13 @@ load_custom_libraries <- function() {
 }
 
 load_packages <- function() {
+  # install.packages("lpSolveAPI")
+  # install.packages("quantmod")
+  # install.packages("dplyr")
+  # install.packages("forecast")
+  # install.packages("leaps")
+  # install.packages("fmsb")
+  # install.packages("Quandl")
   library(lpSolveAPI)
   library(quantmod)
   library(dplyr)
@@ -362,7 +369,9 @@ remove_cybc_tickers <- function() {
     #cmd_string <- paste("corr.data <- cbind(data.env$",etf,"[,'",etf,".Adjusted'],data.env$",ticker,"[,'",ticker,".Adjusted'])",sep="")
     #eval(parse(text=cmd_string))
     cmd_string <- paste("enough_history <- nrow(data.env$",ticker,"[com.env$reg_date_range]) > 200",sep="")
+    print(cmd_string)
     eval(parse(text=cmd_string))
+    print(enough_history)
     if ( (!enough_history) ) {      #| (corr.val < com.env$corr.threshold) ) {
       print(paste("remove",ticker,"from list, not enough history"))
       #print(paste("remove",ticker,"from stx list, not correlated with etf",corr.val))
@@ -1153,7 +1162,54 @@ stock_list <- function() {
     'CHK',
     'RIG'
   )
-  cybc_dataset_symbols <- c("CYBC","BTC","ETH","BCH","LTC","RPL")
+  cybc_dataset_symbols <- c("CYBC","BTC", "ETH", "XRP", "LTC"
+                            ,"BCH"
+                            ,"USDT"
+                            #,"EOS"
+                            ,"XLM"
+                            ,"ADA"
+                            ,"TRX"
+                            ,"MIOTA"
+                            ,"NEO"
+                            ,"DASH"
+                            ,"XMR"
+                            ,"XEM"
+                            ,"VEN"
+                            ,"ETC"
+                            ,"BNB"
+                            #,"BCN"
+                            ,"QTUM"
+                            ,"ZEC"
+                            ,"OMG"
+                            ,"ICX"
+                            ,"LSK"
+                            ,"ZIL"
+                            ,"ONT"
+                            ,"BTG"
+                            ,"AE"
+                            ,"DCR"
+                            ,"STEEM"
+                            ,"ZRX"
+                            ,"XVG"
+                            ,"BTM"
+                            ,"NANO"
+                            ,"SC"
+                            ,"BTCP"
+                            ,"BCD"
+                            ,"BTS"
+                            ,"PPT"
+                            ,"STRAT"
+                            ,"WAN"
+                            #,"MKR"
+                            ,"WAVES"
+                            ,"RHOC"
+                            ,"REP"
+                            ,"DOGE"
+                            #,"GNT"
+                            ,"XIN"
+                            ,"DGB"
+                            ,"WTC"
+  )
   
   small_dataset_etfs <- c('XLF','GDX','XLE')
   large_dataset_etfs <- c('IYZ','XLB','XLE','XLF','XLI','XLK','XLP','XLU','XLV','XLY')

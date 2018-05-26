@@ -1,6 +1,5 @@
 # run_ps.R
 print(paste("Start time:",Sys.time()))
-
 if (!exists("stx_list.loaded")) stx_list.loaded <- NULL
 keep_list <- c("data.env","load.env","etf.env","stx_list.loaded")
 rm(list = ls(all=TRUE)[!ls(all=TRUE) %in% keep_list]) #clean workspace except for keep_list so we don't have to reload data
@@ -17,7 +16,7 @@ run_prediction()                #prediction model (reg_lib.R)
 # library(quantmod)
 # library(dplyr)
 # source("load_data.R")
-# cybc.list <- c("BTC","ETH","BCH","LTC","RPL")  
+# cybc.list <- c("BTC","ETH","BCH","LTC","XRP")  
 # 
 # if (!exists("data.env")) {
 #   data.env <<- new.env(parent=globalenv())
@@ -41,11 +40,11 @@ run_prediction()                #prediction model (reg_lib.R)
 # print(typeof(var.env$Returns))
 # print(is.xts(var.env$Returns))
 
-# for (cybc.str in c("BTC","LTC","RPL","ETH","BCH")) { #),"ETH","RPL")) {
+# for (cybc.str in c("BTC","LTC","XRP","ETH","BCH")) { #),"ETH","XRP")) {
 #   calc_look_forward(cybc.str)
 # }
 # 
-# rets <- cbind(var.env$BTC[,'BTClfn1'],var.env$ETH[,'ETHlfn1'],var.env$RPL[,'RPLlfn1'],var.env$LTC[,'LTClfn1'])
+# rets <- cbind(var.env$BTC[,'BTClfn1'],var.env$ETH[,'ETHlfn1'],var.env$XRP[,'XRPlfn1'],var.env$LTC[,'LTClfn1'])
 # ret1 <- stats::lag(rets,1)
 # retslag <- cbind(rets,ret1)
 # print(cor(retslag,use="complete.obs"))

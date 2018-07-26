@@ -205,8 +205,8 @@ calc_decay <- function(ve.xts,coln,decay,var_cnt=1,first_pass=FALSE) { #compute 
     cmd_string <- paste(data_string,"<- tmp.decay")
     #if (verbose) print(cmd_string)
     eval(parse(text=cmd_string))
-    if (is.null(var_cnt)) {  #shouldn't be needed, debugging purposes only
-      print("WARNING************* var_cnt is null in calc_decay")
+    if (is.na(var_cnt>1)) {  #shouldn't be needed, debugging purposes only
+      print("WARNING************* var_cnt is na in calc_decay")
       print(paste(ve.xts,coln,decay))
       var_cnt <- 1
     }

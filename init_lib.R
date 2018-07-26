@@ -1,15 +1,15 @@
 #init_lib.R
 #parms that should be changed by user manually to control run_ps.R behavior
 set_control_parms <- function() {
-  com.env$model_loops <- 500
+  com.env$model_loops <- 200
   com.env$add_var_levels <- c(10,20,30,40)
   com.env$opt_model <- TRUE
   com.env$load_vars <- TRUE
   com.env$load_model <- TRUE
-  com.env$load_model_name <- "lf1_4_0326.vcom"
+  com.env$load_model_name <- "lf1_4_0725.vcom"
   com.env$save_model <- TRUE
-  com.env$save_model_name <- "lf1_4_0326.vcom"
-  com.env$save_var_n <- 1
+  com.env$save_model_name <- "lf1_4_0725.vcom"
+  com.env$save_var_n <- 2
   com.env$look_forward <- 1
   com.env$mod_var_loops <- 20
   com.env$opt_type <- "adjr2_is"  #{adjr2_is,single_oos,rolling_oos}
